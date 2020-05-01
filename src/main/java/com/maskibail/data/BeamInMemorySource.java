@@ -12,7 +12,6 @@ import org.apache.beam.sdk.values.TypeDescriptors;
 import java.util.Arrays;
 import java.util.List;
 
-//TODO: Fix this!
 public class BeamInMemorySource {
     public static void main(String[] args) {
 
@@ -26,13 +25,13 @@ public class BeamInMemorySource {
         Pipeline pipeline = Pipeline.create(pipelineOptions);
 
         pipeline.apply(Create.of(LINES)).setCoder(StringUtf8Coder.of())
-                .apply(FlatMapElements.into(TypeDescriptors.strings())
-                        .via((String s) -> Arrays.asList(s.split("[^\\\\p{L}]+"))))
-                .apply(Filter.by((String s) -> !s.isEmpty()))
-                .apply(Count.perElement())
-                .apply(MapElements.into(TypeDescriptors.strings())
-                        .via((KV<String, Long> kv) -> kv.getKey() + ":" + kv.getValue()))
-                .apply(TextIO.write().to("output/inMemory/"));
+                .apply("Find words", FlatMapElements.into(TypeDescriptors.strings())
+                        .via((String line) -> Arrays.asList(line.split("[^\\p{L}]+"))))
+                .apply("Filter empty words", Filter.by((String word) -> !word.isEmpty()))
+                .apply("Count words", Count.perElement())
+                .apply("Write results", MapElements.into(TypeDescriptors.strings())
+                        .via((KV<String, Long> wordCount) -> wordCount.getKey() + ": " + wordCount.getValue()))
+                .apply(TextIO.write().to("output/inMemory//"));
         pipeline.run();
     }
 }
