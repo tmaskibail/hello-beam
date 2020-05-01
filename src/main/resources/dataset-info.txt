@@ -1,0 +1,7 @@
+payments.csv:
+Datasource: https://www.kaggle.com/ntnu-testimon/banksim1
+info: 587443 are normal payments and 7200 fraudulent transactions
+
+==========================
+infy_stocks.csv:
+Datasource: https://www.kaggle.com/atulanandjha/national-stock-exchange-time-series#infy_stock.csv
