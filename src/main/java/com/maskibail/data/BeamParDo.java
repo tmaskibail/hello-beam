@@ -24,10 +24,10 @@ public class BeamParDo {
 
         PCollection<AvocadoSale> avocadoSalePCollection = pipeline
                 .apply("Read lines", TextIO.read().from(new File("src/main/resources/avocado.csv").getAbsolutePath()))
-                .apply("transform", ParDo.of(new AvocadoMapper()));
+                .apply("transform lines into AvocadoSale object collection", ParDo.of(new AvocadoMapper()));
 
         avocadoSalePCollection.apply(MapElements.into(TypeDescriptors.strings())
-                .via((AvocadoSale s) -> s.toString()))
+                .via(AvocadoSale::toString))
                 .apply(TextIO.write().to("output/pardo/"));
 
         pipeline.run().waitUntilFinish();

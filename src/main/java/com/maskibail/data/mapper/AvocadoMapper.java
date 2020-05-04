@@ -10,12 +10,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
-public class AvocadoMapper extends DoFn<String, AvocadoSale> {
+ public class AvocadoMapper extends DoFn<String, AvocadoSale> {
     private static final Logger LOG = LoggerFactory.getLogger(AvocadoMapper.class);
 
     @ProcessElement
-    public void processElement(ProcessContext context) {
-        String[] fields = context.element().split(",");
+    public void processElement(@Element String row, OutputReceiver<AvocadoSale> outputReceiver) {
+
+        String[] fields = row.split(",");
         //Hack to skip the headers until a CSV reader in Beam is available
         //OR
         //Read CSVusing CSV libraries and then apply the data to the pipeline
@@ -44,7 +45,7 @@ public class AvocadoMapper extends DoFn<String, AvocadoSale> {
             sale.setType(fields[11].trim());
             sale.setYear(Long.valueOf(fields[12].trim()));
             sale.setRegion(fields[13].trim());
-            context.output(sale);
+            outputReceiver.output(sale);
         }
     }
 }
